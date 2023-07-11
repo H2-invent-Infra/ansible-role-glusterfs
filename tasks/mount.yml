@@ -1,0 +1,15 @@
+---
+- name: "GLUSTERFS | MOUNT | {{ item.mount }} | Create directory for glusterfs mount"
+  file:
+    path: "/mnt/{{ item.mount }}"
+    state: directory
+    owner: "{{ item.owner|default('root') }}"
+    group: "{{ item.group|default('root') }}"
+
+- name: "GLUSTERFS | MOUNT | {{ item.mount }} | Mount GlusterFS on host"
+  ansible.posix.mount:
+    src: "localhost:/{{ item.mount }}"
+    path: "/mnt/{{ item.mount }}"
+    opts: defaults,_netdev
+    state: mounted
+    fstype: glusterfs

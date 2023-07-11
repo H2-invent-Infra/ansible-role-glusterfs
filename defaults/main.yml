@@ -1,11 +1,35 @@
 ---
 glusterfs_daemon: glusterd
 
-# For Ubuntu.
-glusterfs_default_release: ""
-glusterfs_ppa_use: true
-glusterfs_ppa_version: "7"
-
 # For Debian.
-glusterfs_gpg_key_version: "7"
+glusterfs_gpg_key_version: "11"
 glusterfs_deb_version: "LATEST"
+
+
+# Volume
+gluster_volume_host_path: /opt/glusterfs/
+gluster_volume_hosts: "{{ groups['all'] }}"
+gluster_volume_main: DE-NUE-XXX01
+gluster_volumes:
+  - gluster_cluster_volume: testvol01
+    gluster_cluster_replica_count: 2
+    gluster_cluster_disperse_count: 0
+    gluster_cluster_redundancy_count: 0
+    gluster_cluster_arbiter_count: 0
+    gluster_cluster_transport: tcp
+    gluster_cluster_hosts:
+      - host: host01
+        action: add
+      - host: host02
+        action: add
+      - host: host03
+        action: remove
+      - host: host04 
+        action: replace
+        source: host03
+
+gluster_cluster_mounts:
+  - mount: testvol01
+    owner: root
+    group: root
+    mode: 0700

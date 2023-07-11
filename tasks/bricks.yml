@@ -1,0 +1,22 @@
+---
+
+- name: GLUSTERFS | BRICK | Add bricks to a volume
+  command: "gluster volume add-brick {{ item.gluster_cluster_volume }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  run_once: true
+  when:
+    - brick.host not in volume_info.stdout
+    - brick.action|lower == 'add'
+
+- name: GLUSTERFS | BRICK | Replace bricks from a volume
+  command: "gluster volume replace-brick {{ item.gluster_cluster_volume }} {{ brick.source }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} commit force"
+  run_once: true
+  when:
+    - brick.host in volume_info.stdout
+    - brick.action|lower == 'replace'
+
+- name: GLUSTERFS | BRICK | Remove bricks from a volume
+  command: "gluster volume remove-brick {{ item.gluster_cluster_volume }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  run_once: true
+  when:
+    - brick.host in volume_info.stdout
+    - brick.action|lower == 'remove'

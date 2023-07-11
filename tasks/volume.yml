@@ -1,0 +1,40 @@
+---
+- name: GLUSTERFS | VOLUME | Set fact
+  set_fact:
+    gluster_cluster_volume: "{{ item.gluster_cluster_volume }}"
+
+- name: "GLUSTERFS | VOLUME | Create directory for gluster volume brick"
+  file:
+    path: "{{ gluster_volume_host_path }}{{ gluster_cluster_volume }}"
+    state: directory
+    owner: root
+    group: root
+
+- name: GLUSTERFS | VOLUME | Check if volumen exists
+  command: "gluster volume info {{ item.gluster_cluster_volume }}"
+  ignore_errors: true
+  register: volume_info
+
+- name: "GLUSTERFS | VOLUME | Create a volume {{ item.gluster_cluster_volume }}"
+  command: "gluster volume create {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count | default(0) }} transport {{ item.gluster_cluster_transport | default('tcp') }} {{ item.gluster_cluster_hosts[0].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} {{ item.gluster_cluster_hosts[1].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  when:
+    - "'Volume Name:' not in volume_info.stdout"
+  run_once: true
+
+- name: "GLUSTERFS | VOLUME | Start Cluster {{ item.gluster_cluster_volume }}"
+  command: "gluster volume start {{ item.gluster_cluster_volume }}"
+  when:
+    - "'Status: Started' not in volume_info.stdout"
+  run_once: true
+
+- name: GLUSTERFS | VOLUME | Check volumen info for bricks
+  command: "gluster volume info {{ item.gluster_cluster_volume }}"
+  ignore_errors: true
+  register: volume_info
+
+- include: bricks.yml
+  when:
+    - "'Volume Name:' in volume_info.stdout"
+  loop: "{{ item.gluster_cluster_hosts }}"
+  loop_control:
+    loop_var: brick
