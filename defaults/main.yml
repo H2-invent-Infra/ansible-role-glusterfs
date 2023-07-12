@@ -37,3 +37,9 @@ gluster_cluster_mounts:
     owner: root
     group: root
     mode: 0700
+    links:
+      - src: data
+        dest: dest-data
+        state: link
+        owner: www-data
+        group: www-data
