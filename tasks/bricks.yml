@@ -1,7 +1,7 @@
 ---
 
 - name: GLUSTERFS | BRICK | Add bricks to a volume
-  command: "gluster volume add-brick {{ item.gluster_cluster_volume }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  command: "gluster volume add-brick {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
   run_once: true
   when:
     - brick.host not in volume_info.stdout
@@ -15,8 +15,12 @@
     - brick.action|lower == 'replace'
 
 - name: GLUSTERFS | BRICK | Remove bricks from a volume
-  command: "gluster volume remove-brick {{ item.gluster_cluster_volume }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  command: "{{ item }}"
   run_once: true
+  with_items:
+    - "gluster volume remove-brick {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} start"
+    - "gluster volume remove-brick {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} status"
+    - "gluster volume remove-brick {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count }} {{ brick.host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} commit"
   when:
     - brick.host in volume_info.stdout
     - brick.action|lower == 'remove'

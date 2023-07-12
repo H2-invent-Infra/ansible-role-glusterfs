@@ -3,10 +3,14 @@
 - name: "GLUSTERFS | PEER | Check peer status"
   command: gluster peer status
   register: peer_status
+  ignore_errors: true
 
 - name: "GLUSTERFS | PEER | Peer server to cluster"
-  command: "gluster peer probe {{ item }}"
-  with_items: "{{ gluster_volume_hosts }}"
+  command: "gluster peer probe {{ peer }}"
+  run_once: true
+  loop: "{{ gluster_volume_hosts }}"
+  loop_control:
+    loop_var: peer
   when:
-    - "inventory_hostname != item"
-    - "item not in peer_status.stdout"
+    - "inventory_hostname != peer"
+    - "peer not in peer_status.stdout"

@@ -7,7 +7,7 @@ glusterfs_deb_version: "LATEST"
 
 
 # Volume
-gluster_volume_host_path: /opt/glusterfs/
+gluster_volume_host_path: /opt/.glusterfs/
 gluster_volume_hosts: "{{ groups['all'] }}"
 gluster_volume_main: DE-NUE-XXX01
 gluster_volumes:
@@ -17,6 +17,10 @@ gluster_volumes:
     gluster_cluster_redundancy_count: 0
     gluster_cluster_arbiter_count: 0
     gluster_cluster_transport: tcp
+    gluster_cluster_opt:
+      - performance.cache-size 256MB
+      - auth.allow 127.0.0.1
+
     gluster_cluster_hosts:
       - host: host01
         action: add

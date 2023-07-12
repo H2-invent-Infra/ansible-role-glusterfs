@@ -45,5 +45,5 @@
 - name: GLUSTERFS | SETUP | Ensure GlusterFS is started and enabled at boot.
   service:
     name: glusterd
-    state: started
+    state: restarted
     enabled: yes
