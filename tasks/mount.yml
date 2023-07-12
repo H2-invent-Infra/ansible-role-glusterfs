@@ -16,8 +16,8 @@
 
 - name: "GLUSTERFS | MOUNT | {{ item.mount }} | Create Links Src Directory in Mount"
   file:
-    path: "/mnt/{{ item.mount }}/{{ link.mount }}"
-    state: "{{ link.state | default('directory') }}"
+    path: "/mnt/{{ item.mount }}/{{ link.src }}"
+    state: "directory"
     owner: "{{ link.owner }}"
     group: "{{ link.group }}"
   loop: "{{ item.links }}"
@@ -29,7 +29,7 @@
 
 - name: "GLUSTERFS | MOUNT | {{ item.mount }} | Create Links to Mount"
   file:
-    src: "/mnt/{{ item.mount }}/{{ link.mount }}"
+    src: "/mnt/{{ item.mount }}/{{ link.src }}"
     dest: "{{ link.dest }}"
     state: "{{ link.state | default('link') }}"
     owner: "{{ link.owner }}"
@@ -40,3 +40,11 @@
     - item.links | length > 0
   loop_control:
     loop_var: link
+
+- name: Create cronjob to mount at reboot (workaround)
+  cron:
+    name: Mount all Gluster directories at boot
+    special_time: reboot
+    job: "mount -a"
+    cron_file: gluster
+    user: root

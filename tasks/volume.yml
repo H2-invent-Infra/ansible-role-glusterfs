@@ -29,6 +29,7 @@
 
 - name: "GLUSTERFS | VOLUME | Tunning the Volume"
   command: "gluster volume set {{ item.gluster_cluster_volume }} {{ opt }}"
+  run_once: true
   loop: "{{ item.gluster_cluster_opt }}"
   loop_control:
     loop_var: opt

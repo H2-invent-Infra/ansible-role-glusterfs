@@ -9,3 +9,4 @@
 
 - include: mount.yml
   with_items: "{{ gluster_cluster_mounts }}"
+  tags: mount
