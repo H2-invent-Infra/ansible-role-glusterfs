@@ -2,7 +2,7 @@
 glusterfs_daemon: glusterd
 
 # For Debian.
-glusterfs_gpg_key_version: "11"
+glusterfs_gpg_key_version: "10"
 glusterfs_deb_version: "LATEST"
 
 
