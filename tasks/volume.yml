@@ -16,7 +16,7 @@
   register: volume_info
 
 - name: "GLUSTERFS | VOLUME | Create a volume {{ item.gluster_cluster_volume }}"
-  command: "gluster volume create {{ item.gluster_cluster_volume }} replica {{ item.gluster_cluster_replica_count | default(0) }} transport {{ item.gluster_cluster_transport | default('tcp') }} {{ item.gluster_cluster_hosts[0].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} {{ item.gluster_cluster_hosts[1].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
+  command: "gluster volume create {{ item.gluster_cluster_volume }} replica {% if item.gluster_cluster_replica_count == '2' %}{{ item.gluster_cluster_replica_count | default(0) }}{% else %}2{% endif %} transport {{ item.gluster_cluster_transport | default('tcp') }} {{ item.gluster_cluster_hosts[0].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} {{ item.gluster_cluster_hosts[1].host }}:{{ gluster_volume_host_path }}{{ gluster_cluster_volume }} force"
   when:
     - "'Volume Name:' not in volume_info.stdout"
   run_once: true
