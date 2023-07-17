@@ -8,7 +8,7 @@
 - name: "GLUSTERFS | PEER | Peer server to cluster"
   command: "gluster peer probe {{ peer }}"
   run_once: true
-  loop: "{{ gluster_volume_hosts }}"
+  loop: "{{ gluster_peer_hosts }}"
   loop_control:
     loop_var: peer
   when:

@@ -8,7 +8,7 @@ glusterfs_deb_version: "LATEST"
 
 # Volume
 gluster_volume_host_path: /opt/.glusterfs/
-gluster_volume_hosts: "{{ groups['all'] }}"
+gluster_peer_hosts: "{{ groups['all'] }}"
 gluster_volume_main: DE-NUE-XXX01
 gluster_volumes:
   - gluster_cluster_volume: testvol01
