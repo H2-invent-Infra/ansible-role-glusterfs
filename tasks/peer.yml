@@ -5,12 +5,18 @@
   register: peer_status
   ignore_errors: true
 
+- name: "GLUSTERFS | PEER | Get activ cluster host"
+  command: 'gluster peer status | grep Hostname: | cut -d " " -f2'
+  register: peer_activ_host
+  ignore_errors: true
+
 - name: "GLUSTERFS | PEER | Peer server to cluster"
   command: "gluster peer probe {{ peer }}"
   run_once: true
   loop: "{{ gluster_peer_hosts }}"
   loop_control:
     loop_var: peer
+  delegate_to: "{{ peer_activ_host.stdout_lines[0] | default(omit) }}"
   when:
     - "inventory_hostname != peer"
     - "peer not in peer_status.stdout"
