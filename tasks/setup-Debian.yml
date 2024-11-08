@@ -7,33 +7,21 @@
       - ca-certificates
     state: present
 
-- name: GLUSTERFS | SETUP | Ensure repository pubkey for GlusterFS is present.
-  apt_key:
-    url: 'https://download.gluster.org/pub/gluster/glusterfs/{{ glusterfs_gpg_key_version }}/rsa.pub'
-    state: present
-  register: glusterfs_pub_key_added
-
 - name: Get the DEB architecture.
   command: dpkg --print-architecture
   changed_when: false
   register: deb_architecture
 
-- name: GLUSTERFS | SETUP | Ensure debian repo is present.
-  apt_repository:
-    repo: "deb https://download.gluster.org/pub/gluster/glusterfs/{{ glusterfs_gpg_key_version }}/{{ glusterfs_deb_version }}/Debian/\
-      {% if ansible_distribution_major_version|int >= 11 %}{{ ansible_distribution_major_version }}{% else %}{{ ansible_distribution_release }}{% endif %}/{{ deb_architecture.stdout }}/apt {{ ansible_distribution_release }} main"
-    state: present
-    filename: gluster
-  register: glusterfs_deb_source_added
-
-- name: GLUSTERFS | SETUP | Ensure GlusterFS will reinstall if the DEB source was just added.
-  apt:
-    name:
-      - glusterfs-server
-      - glusterfs-client
-    state: absent
-  when: glusterfs_deb_source_added.changed
-  tags: ['skip_ansible_lint']
+- include_role:
+    name: ansible-role-apt-repo
+    tasks_from: repo
+  vars:
+    h2_apt_repos:
+      - name: gluster
+        repo: "https://download.gluster.org/pub/gluster/glusterfs/{{ glusterfs_gpg_key_version }}/{{ glusterfs_deb_version }}/Debian/\
+          {{ ansible_distribution_release }}/{{ deb_architecture.stdout }}/apt {{ ansible_distribution_release }} main"
+        gpg: "https://download.gluster.org/pub/gluster/glusterfs/{{ glusterfs_gpg_key_version }}/rsa.pub"
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: GLUSTERFS | SETUP | Ensure GlusterFS is installed.
   apt:
