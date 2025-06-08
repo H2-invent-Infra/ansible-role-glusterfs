@@ -39,7 +39,7 @@
   ignore_errors: true
   register: volume_info
 
-- include: bricks.yml
+- include_tasks: bricks.yml
   when:
     - "'Volume Name:' in volume_info.stdout"
   loop: "{{ item.gluster_cluster_hosts }}"

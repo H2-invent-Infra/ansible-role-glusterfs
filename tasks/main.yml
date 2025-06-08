@@ -1,12 +1,12 @@
 ---
-- include: setup-{{ ansible_distribution }}.yml
+- include_tasks: setup-{{ ansible_distribution }}.yml
 
-- include: peer.yml
+- include_tasks: peer.yml
   with_items: "{{ gluster_volumes }}"
 
-- include: volume.yml
+- include_tasks: volume.yml
   with_items: "{{ gluster_volumes }}"
 
-- include: mount.yml
+- include_tasks: mount.yml
   with_items: "{{ gluster_cluster_mounts }}"
   tags: mount
