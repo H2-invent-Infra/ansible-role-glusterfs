@@ -8,7 +8,7 @@
 
 - name: "GLUSTERFS | MOUNT | {{ item.mount }} | Mount GlusterFS on host"
   ansible.posix.mount:
-    src: "localhost:/{{ item.mount }}"
+    src: "localhost:/{{ item.src | default(item.mount) }}"
     path: "/mnt/{{ item.mount }}"
     opts: defaults,_netdev
     state: mounted
